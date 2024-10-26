@@ -1,0 +1,3 @@
+139yun:
+  token: '' #移动云盘Authorization 可参考Alist文档进行抓包
+  phone: '' #手机号 用于获取ssoToken
