@@ -126,7 +126,7 @@ class CaiYun:
             headers=headers,
             cookies=self.cookies,
             data=data,
-            verify=False
+            #verify=False
         )
         if resp.status_code != 200:
             logger.error(f"上传文件失败，返回结果{resp.content}")  
@@ -197,7 +197,7 @@ class CaiYun:
             headers=self.headers,
             cookies=self.cookies,
             data=json.dumps(share_data),
-            verify=False,
+            #verify=False,
         ).json()
         #print(resp_json)
         if resp_json.get('success') == True:
@@ -230,13 +230,13 @@ def job():
     logger.success("任务执行完成")
 
 def main():
-    #schedule.every().day.at("08:00").do(job)
-    #schedule.every().day.at("20:00").do(job)
-    #logger.success("定时任务已创建，将在8:00和20:00执行一次")
-    #while True:
-        #schedule.run_pending()
-        #time.sleep(1)
-    job()
+    schedule.every().day.at("08:00").do(job)
+    schedule.every().day.at("20:00").do(job)
+    logger.success("定时任务已创建，将在8:00和20:00执行一次")
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+    #job()
 
 if __name__ == '__main__':
     logger.info('程序启动')
