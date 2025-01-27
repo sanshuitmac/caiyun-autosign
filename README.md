@@ -1,6 +1,6 @@
 ![caiyun-autosign](https://socialify.git.ci/unify-z/caiyun-autosign/image?description=1&language=1&name=1&owner=1&theme=Auto)
 ## 📖 介绍
-基于 Python 的中国移动云盘（和彩云）自动签到程序
+基于 Python 的中国移动云盘（原和彩云）自动签到程序
 
 ## 📚 使用方法
 ### 1. 安装环境
@@ -18,7 +18,7 @@ pip install -r requirements.txt
 
 2. 获取认证信息
 
-    参考 [AList 官方文档](https://alist.nn.ci/zh/guide/drivers/139.html#%E6%96%B0%E4%B8%AA%E4%BA%BA%E4%BA%91) 的 `新个人云` 部分
+    参考 [AList 官方文档](https://alist.nn.ci/zh/guide/drivers/139.html#%E6%96%B0%E4%B8%AA%E4%BA%BA%E4%BA%91) 的 `个人云` 部分
     - 获取 `Authorization`（仅保留 `Basic` 后的内容）
     - 该文件夹的 `目录 ID（Folder ID）` 并留存备用。
 
