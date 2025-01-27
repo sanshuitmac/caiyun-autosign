@@ -184,7 +184,7 @@ class CaiYun:
             "isWatermark": 0,
             "shareChannel": "3001"
         },
-        "period": 1,
+        "period": 1,   
         "commonAccountInfo": {
             "account": self.account,
             "accountType": 1
