@@ -1,24 +1,53 @@
 import yaml
-import os
 
 class Config:
-    def __init__(self):
-        self.config = self.load_config()
-        self.caiyun_token = self.config.get('139yun').get('token')
-        self.phone = self.config.get('139yun').get('phone')
+    def __init__(self, config_file):
+        self.config_file = config_file
+        print(f"Loading config from: {self.config_file}")
+        self.config = {}
+        self.load_config()
+
+    def get(self, key, default=None):
+        if not isinstance(key, str):
+            raise TypeError(f"The key must be a string, received key: {key}")
+        
+        current = self.config
+        parts = key.split('.')
+        
+        for part in parts:
+            if isinstance(current, dict) and part in current:
+                current = current[part]
+            else:
+                return default
+        return current
+
+    def set(self, key, value):
+        if not isinstance(key, str):
+            raise TypeError(f"The key must be a string, received key: {key}")
+        
+        current = self.config
+        parts = key.split('.')
+        
+        for part in parts[:-1]:
+            if part not in current:
+                current[part] = {}
+            elif not isinstance(current[part], dict):
+                current[part] = {}
+            current = current[part]
+        
+        current[parts[-1]] = value
+        self.save_config()
 
     def load_config(self):
         try:
-            with open(f'./config.yaml', 'r') as file:
-                config_data = yaml.safe_load(file)
-                return config_data
+            with open(self.config_file, 'r') as f:
+                loaded = yaml.safe_load(f)
+                self.config = loaded if loaded is not None else {}
         except FileNotFoundError:
-            print("配置文件未找到，请检查路径是否正确。")
-            return {}
-        except yaml.YAMLError as exc:
-            print(f"YAML格式错误: {exc}")
-            return {}
-        except Exception as e:
-            print(f"加载配置文件失败: {e}")
-            return {}
-config = Config()
+            self.config = {}
+
+    def save_config(self):
+        with open(self.config_file, 'w') as f:
+            yaml.dump(self.config, f)
+
+config = Config('./config.yaml')

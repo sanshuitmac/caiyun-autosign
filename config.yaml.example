@@ -1,3 +1,7 @@
 139yun:
   token: '' #移动云盘Authorization 可参考Alist文档进行抓包
   phone: '' #手机号 用于获取ssoToken
+  upload_dirid: '' #上传文件时文件夹id
+share:
+  filename: '' #分享时使用的文件名，需要放置在上传文件时文件夹目录内
+  
