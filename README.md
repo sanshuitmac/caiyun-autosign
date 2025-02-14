@@ -33,9 +33,12 @@ pip install -r requirements.txt
   token: "你的 Authorization"
   phone: "手机号"
   upload_dirid: "文件夹的 目录ID"
-
+  AccountType: 1 #账号类型 1=新个人云 0=个人云 可参考Alist文档进行判断
 share:
+  enable: true #是否开启完成分享文件任务功能
   filename: "用来分享的文件名"
+upload:
+  enable: false #是否开启完成上传任务功能
 ```
 
 ### 5. 执行脚本
