@@ -36,6 +36,9 @@ class CaiYun:
             "account": self.account,
             "toSourceId": "001003"
         }
+        if config.get('caiyun.AccountType') == 1:
+            url = 'https://user-njs.yun.139.com/user/querySpecToken'
+            headers['Host'] = 'user-njs.yun.139.com'
         resp = requests.post(url, headers=headers, data=json.dumps(data)).json()
         if resp['success'] == True:
             new_token = resp['data']['token']
@@ -44,7 +47,7 @@ class CaiYun:
 
     def fetch_jwtToken(self):
         ssoToken = self.fetch_ssoToken()
-        print(ssoToken)
+        logger.debug(f"use ssoToken: {ssoToken}")
         url = f"https://caiyun.feixin.10086.cn:7071/portal/auth/tyrzLogin.action?ssoToken={ssoToken}"
         resp = requests.get(url, headers=self.headers).json()
         if resp['code'] != 0:
@@ -75,6 +78,9 @@ class CaiYun:
             logger.warning(f"检测签到状态失败，原因 {c_resp['msg']}")
             return False
     def upload(self, file_bytes):
+        if config.get('upload.enable') == False:
+            logger.info('上传功能未开启，跳过')
+            return True
         data = f"""
         <pcUploadFileRequest>
             <ownerMSISDN>{self.account}</ownerMSISDN>
@@ -144,6 +150,9 @@ class CaiYun:
 
 
     def share_file(self):
+        if config.get('share.enable') == False:
+            logger.info('分享功能未开启，跳过')
+            return True
         get_filelist_data = {
             "catalogID": config.get('caiyun.upload_dirid'),
             "sortDirection": 1,
@@ -157,20 +166,76 @@ class CaiYun:
             "accountType": 1
             }
         }
-        # 仅支持个人云
-        filelist = requests.post(
-            url='https://yun.139.com/orchestration/personalCloud/catalog/v1.0/getDisk',
-            headers=self.headers,
+        url ='https://yun.139.com/orchestration/personalCloud/catalog/v1.0/getDisk'
+        if config.get('caiyun.AccountType') == 1:
+            url = 'https://personal-kd-njs.yun.139.com/hcy/file/list'
+            get_filelist_data = {
+    "parentFileId": config.get('caiyun.upload_dirid'),
+    "pageInfo": {
+        "pageSize": 40,
+        "pageCursor": "0|[9-1-0,11-0-1][JzIwMjQtMDMtMDlUMTA6MzM6MTguNzEyWic=,J0ZzSVEweF9NVVVDVmNqQ1plaTJ0SFZxSjVadjNsbEZ5bCc=]"
+    },
+    "imageThumbnailStyleList": [
+        "Big",
+        "Small"
+    ],
+    "orderDirection": "DESC",
+    "orderBy": "updated_at"
+}
+            headers = {
+    "x-yun-op-type": "1",
+    "x-yun-net-type": "1",
+    "x-yun-module-type": "100",
+    "x-yun-app-channel": "10214200",
+    "x-yun-client-info": "1||8|5.10.1|microsoft|microsoft|306d1d1c-016c-4251-9ea6-951dca||windows 10 x64|||||",
+    "x-tingyun": "c=M|4Nl_NnGbjwY",
+    "authorization": f"Basic {self.auth_token}",
+    "x-yun-api-version": "v1",
+    "xweb_xhr": "1",
+    "x-yun-tid": "cb8a2b4b-8eb7-4b05-b1c1-e41020",
+    "content-type": "application/json"
+}
+        filelist_resp = requests.post(
+            url=url,
+            headers=self.headers if config.get('caiyun.AccountType') == 0 else headers,
             cookies=self.cookies,
             data=json.dumps(get_filelist_data)
-        ).json()
-        #print(filelist)
-        contentList = filelist.get('data').get('getDiskResult').get('contentList')
-        if contentList == []:
-            logger.warning('没有文件可以分享')
-            return False
-        share_file_data = [item for item in contentList if config.get('share.filename') in item["contentName"]][0]
-        share_data = {
+        )
+        filelist = filelist_resp.json()
+        share_file_data = {}
+        share_data = {}
+        if config.get('caiyun.AccountType') == 1:
+            contentList = filelist.get('data').get('items')
+            share_file_data = [item for item in contentList if config.get('share.filename') in item['name']][0]
+            share_data = {
+    "getOutLinkReq": {
+        "subLinkType": 0,
+        "encrypt": 1,
+        "coIDLst": [share_file_data.get('fileId')],
+        "caIDLst": [],
+        "pubType": 1,
+        "dedicatedName": share_file_data.get('name'),
+        "periodUnit": 1,
+        "viewerLst": [],
+        "extInfo": {
+            "isWatermark": 0,
+            "shareChannel": "3001"
+        },
+        "period": 1,   
+        "commonAccountInfo": {
+            "account": self.account,
+            "accountType": 1
+        }
+    }
+
+}
+        if config.get('caiyun.AccountType') == 0:
+            contentList = filelist.get('data').get('getDiskResult').get('contentList')
+            if contentList == []:
+                logger.warning('没有文件可以分享')
+                return False
+            share_file_data = [item for item in contentList if config.get('share.filename') in item["contentName"]][0]
+            share_data = {
     "getOutLinkReq": {
         "subLinkType": 0,
         "encrypt": 1,
@@ -214,7 +279,6 @@ def gen_file(size_mb=15):
     file_size = size_mb * 1024 * 1024
     return os.urandom(file_size)
 def job():
-    #print(config.get('caiyun.token'),config.get('caiyun.phone'))
     caiyun = CaiYun(token=config.get('caiyun.token'), account=config.get('caiyun.phone'))
     logger.info("获取jwtToken")
     caiyun.fetch_jwtToken()
@@ -222,7 +286,7 @@ def job():
     caiyun.sign()
     logger.info("开始上传大小为7M的文件")
     caiyun.upload(gen_file(7))
-    logger.info("完成分享文件任务")
+    logger.info("开始完成分享文件任务")
     caiyun.share_file()
     logger.info("检查待领取云朵")
     caiyun.check_pending_clouds()
@@ -230,13 +294,15 @@ def job():
     logger.success("任务执行完成")
 
 def main():
+    '''
     schedule.every().day.at("08:00").do(job)
     schedule.every().day.at("20:00").do(job)
     logger.success("定时任务已创建，将在8:00和20:00执行一次")
     while True:
         schedule.run_pending()
         time.sleep(1)
-    #job()
+    '''
+    job()
 
 if __name__ == '__main__':
     logger.info('程序启动')
