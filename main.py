@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 
 
 class CaiYun:
-    def __init__(self, token: str, account: int):
+    def __init__(self, token: str, account: str):
         self.auth_token = token
         self.url = 'https://caiyun.feixin.10086.cn'
         self.headers = {
@@ -23,7 +23,7 @@ class CaiYun:
         self.cookies = {
             "jwtToken": ""
         }
-        self.account = account
+        self.account = str(account)
 
     def fetch_ssoToken(self):
         url = 'https://orches.yun.139.com/orchestration/auth-rebuild/token/v1.0/querySpecToken?client=app'
@@ -41,6 +41,10 @@ class CaiYun:
         if config.get('caiyun.AccountType') == 1:
             url = 'https://user-njs.yun.139.com/user/querySpecToken'
             headers['Host'] = 'user-njs.yun.139.com'
+            data = {
+                "phoneNumber": self.account,
+                "toSourceId": "001003"
+            }
         resp = requests.post(url, headers=headers, data=json.dumps(data)).json()
         if resp['success'] == True:
             new_token = resp['data']['token']
@@ -284,7 +288,7 @@ def gen_file(size_mb=15):
 
 
 def job():
-    caiyun = CaiYun(token=str(config.get('caiyun.token')), account=int(config.get('caiyun.phone')))  # type: ignore
+    caiyun = CaiYun(token=str(config.get('caiyun.token')), account=config.get('caiyun.phone'))  # type: ignore
     logger.info("获取jwtToken")
     caiyun.fetch_jwtToken()
     logger.info("开始签到")
