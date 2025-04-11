@@ -7,8 +7,10 @@ import schedule
 import time
 import os
 import xml.etree.ElementTree as ET
+
+
 class CaiYun:
-    def __init__(self, token: str, account: str):
+    def __init__(self, token: str, account: int):
         self.auth_token = token
         self.url = 'https://caiyun.feixin.10086.cn'
         self.headers = {
@@ -77,6 +79,7 @@ class CaiYun:
         else:
             logger.warning(f"检测签到状态失败，原因 {c_resp['msg']}")
             return False
+
     def upload(self, file_bytes):
         if config.get('upload.enable') == False:
             logger.info('上传功能未开启，跳过')
@@ -132,22 +135,22 @@ class CaiYun:
             headers=headers,
             cookies=self.cookies,
             data=data,
-            #verify=False
+            # verify=False
         )
         if resp.status_code != 200:
             logger.error(f"上传文件失败，返回结果{resp.content}")  
             return False
         logger.success("上传文件成功")
         return True  
-    
 
     def check_pending_clouds(self):
-        r = requests.get('https://caiyun.feixin.10086.cn/market/signin/page/receive', headers=self.headers, cookies=self.cookies).json()
+        r = requests.get('https://caiyun.feixin.10086.cn/market/signin/page/receive', 
+                        headers=self.headers, 
+                        cookies=self.cookies).json()
         clouds = r["result"].get("receive", "")
         all_clouds = r["result"].get("total", "")
         logger.info(f'当前待领取云朵:{clouds}')
         logger.info(f'当前云朵数量:{all_clouds}')
-
 
     def share_file(self):
         if config.get('share.enable') == False:
@@ -162,39 +165,39 @@ class CaiYun:
             "catalogSortType": 0,
             "contentSortType": 0,
             "commonAccountInfo": {
-            "account": self.account,
-            "accountType": 1
+                "account": self.account,
+                "accountType": 1
             }
         }
-        url ='https://yun.139.com/orchestration/personalCloud/catalog/v1.0/getDisk'
+        url = 'https://yun.139.com/orchestration/personalCloud/catalog/v1.0/getDisk'
         if config.get('caiyun.AccountType') == 1:
             url = 'https://personal-kd-njs.yun.139.com/hcy/file/list'
             get_filelist_data = {
-    "parentFileId": config.get('caiyun.upload_dirid'),
-    "pageInfo": {
-        "pageSize": 40,
-        "pageCursor": "0|[9-1-0,11-0-1][JzIwMjQtMDMtMDlUMTA6MzM6MTguNzEyWic=,J0ZzSVEweF9NVVVDVmNqQ1plaTJ0SFZxSjVadjNsbEZ5bCc=]"
-    },
-    "imageThumbnailStyleList": [
-        "Big",
-        "Small"
-    ],
-    "orderDirection": "DESC",
-    "orderBy": "updated_at"
-}
-            headers = {
-    "x-yun-op-type": "1",
-    "x-yun-net-type": "1",
-    "x-yun-module-type": "100",
-    "x-yun-app-channel": "10214200",
-    "x-yun-client-info": "1||8|5.10.1|microsoft|microsoft|306d1d1c-016c-4251-9ea6-951dca||windows 10 x64|||||",
-    "x-tingyun": "c=M|4Nl_NnGbjwY",
-    "authorization": f"Basic {self.auth_token}",
-    "x-yun-api-version": "v1",
-    "xweb_xhr": "1",
-    "x-yun-tid": "cb8a2b4b-8eb7-4b05-b1c1-e41020",
-    "content-type": "application/json"
-}
+                "parentFileId": config.get('caiyun.upload_dirid'),
+                "pageInfo": {
+                    "pageSize": 40,
+                    "pageCursor": "0|[9-1-0,11-0-1][JzIwMjQtMDMtMDlUMTA6MzM6MTguNzEyWic=,J0ZzSVEweF9NVVVDVmNqQ1plaTJ0SFZxSjVadjNsbEZ5bCc=]"
+                },
+                "imageThumbnailStyleList": [
+                    "Big",
+                    "Small"
+                ],
+                "orderDirection": "DESC",
+                "orderBy": "updated_at"
+            }
+        headers = {
+            "x-yun-op-type": "1",
+            "x-yun-net-type": "1",
+            "x-yun-module-type": "100",
+            "x-yun-app-channel": "10214200",
+            "x-yun-client-info": "1||8|5.10.1|microsoft|microsoft|306d1d1c-016c-4251-9ea6-951dca||windows 10 x64|||||",
+            "x-tingyun": "c=M|4Nl_NnGbjwY",
+            "authorization": f"Basic {self.auth_token}",
+            "x-yun-api-version": "v1",
+            "xweb_xhr": "1",
+            "x-yun-tid": "cb8a2b4b-8eb7-4b05-b1c1-e41020",
+            "content-type": "application/json"
+        }
         filelist_resp = requests.post(
             url=url,
             headers=self.headers if config.get('caiyun.AccountType') == 0 else headers,
@@ -204,31 +207,32 @@ class CaiYun:
         filelist = filelist_resp.json()
         share_file_data = {}
         share_data = {}
+        
         if config.get('caiyun.AccountType') == 1:
             contentList = filelist.get('data').get('items')
             share_file_data = [item for item in contentList if config.get('share.filename') in item['name']][0]
             share_data = {
-    "getOutLinkReq": {
-        "subLinkType": 0,
-        "encrypt": 1,
-        "coIDLst": [share_file_data.get('fileId')],
-        "caIDLst": [],
-        "pubType": 1,
-        "dedicatedName": share_file_data.get('name'),
-        "periodUnit": 1,
-        "viewerLst": [],
-        "extInfo": {
-            "isWatermark": 0,
-            "shareChannel": "3001"
-        },
-        "period": 1,   
-        "commonAccountInfo": {
-            "account": self.account,
-            "accountType": 1
-        }
-    }
-
-}
+                "getOutLinkReq": {
+                    "subLinkType": 0,
+                    "encrypt": 1,
+                    "coIDLst": [share_file_data.get('fileId')],
+                    "caIDLst": [],
+                    "pubType": 1,
+                    "dedicatedName": share_file_data.get('name'),
+                    "periodUnit": 1,
+                    "viewerLst": [],
+                    "extInfo": {
+                        "isWatermark": 0,
+                        "shareChannel": "3001"
+                    },
+                    "period": 1,
+                    "commonAccountInfo": {
+                        "account": self.account,
+                        "accountType": 1
+                    }
+                }
+            }
+            
         if config.get('caiyun.AccountType') == 0:
             contentList = filelist.get('data').get('getDiskResult').get('contentList')
             if contentList == []:
@@ -236,35 +240,35 @@ class CaiYun:
                 return False
             share_file_data = [item for item in contentList if config.get('share.filename') in item["contentName"]][0]
             share_data = {
-    "getOutLinkReq": {
-        "subLinkType": 0,
-        "encrypt": 1,
-        "coIDLst": [share_file_data.get('contentID')],
-        "caIDLst": [],
-        "pubType": 1,
-        "dedicatedName": share_file_data.get('contentName'),
-        "periodUnit": 1,
-        "viewerLst": [],
-        "extInfo": {
-            "isWatermark": 0,
-            "shareChannel": "3001"
-        },
-        "period": 1,   
-        "commonAccountInfo": {
-            "account": self.account,
-            "accountType": 1
-        }
-    }
-
-}
+                "getOutLinkReq": {
+                    "subLinkType": 0,
+                    "encrypt": 1,
+                    "coIDLst": [share_file_data.get('contentID')],
+                    "caIDLst": [],
+                    "pubType": 1,
+                    "dedicatedName": share_file_data.get('contentName'),
+                    "periodUnit": 1,
+                    "viewerLst": [],
+                    "extInfo": {
+                        "isWatermark": 0,
+                        "shareChannel": "3001"
+                    },
+                    "period": 1,
+                    "commonAccountInfo": {
+                        "account": self.account,
+                        "accountType": 1
+                    }
+                }
+            }
+            
         resp_json = requests.post(
             url='https://yun.139.com/orchestration/personalCloud-rebuild/outlink/v1.0/getOutLink',
             headers=self.headers,
             cookies=self.cookies,
             data=json.dumps(share_data),
-            #verify=False,
+            # verify=False,
         ).json()
-        #print(resp_json)
+        
         if resp_json.get('success') == True:
             out_link = resp_json.get("data").get("getOutLinkRes").get("getOutLinkResSet")[0].get("linkUrl")
             logger.success(f'分享成功,url: {out_link}')
@@ -274,12 +278,13 @@ class CaiYun:
             return False
 
 
-
 def gen_file(size_mb=15):
     file_size = size_mb * 1024 * 1024
     return os.urandom(file_size)
+
+
 def job():
-    caiyun = CaiYun(token=config.get('caiyun.token'), account=config.get('caiyun.phone'))
+    caiyun = CaiYun(token=str(config.get('caiyun.token')), account=int(config.get('caiyun.phone')))  # type: ignore
     logger.info("获取jwtToken")
     caiyun.fetch_jwtToken()
     logger.info("开始签到")
@@ -290,8 +295,8 @@ def job():
     caiyun.share_file()
     logger.info("检查待领取云朵")
     caiyun.check_pending_clouds()
-
     logger.success("任务执行完成")
+
 
 def main():
     '''
@@ -303,6 +308,7 @@ def main():
         time.sleep(1)
     '''
     job()
+
 
 if __name__ == '__main__':
     logger.info('程序启动')
