@@ -113,7 +113,8 @@ class YP:
             self.open_send()
             # print(f'\n📧 139邮箱任务')
             # self.get_tasklist(url='newsign_139mail', app_type='email_app')
-            # self.receive()
+            # 领取云朵
+            self.receive()
         else:
             global err_accounts
             # 失效账号
