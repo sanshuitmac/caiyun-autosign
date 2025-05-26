@@ -1,0 +1,17 @@
+# 只有签到能用
+caiyun:
+  #移动云盘Authorization 可参考Alist文档进行抓包
+  token: 'cGM6MTUwMTQ3NDkzNDk6bThicEVid3R8MXxSQ1N8MTc1MDg1NDE1OTUxNHxFLnNBRW5rNEhzbldHNTJ6Y0dWMFU5TDlTM3p4TUxuNVI3bnFZREU2ZDhwTDZXMXJRNl9oLlZ5QklUaVQ1YWlHWkhBY0Z2cGpBV1dsLmM2eC5UeXJOWk9IX00wZFk0RDRYeEFzVTFQVmYySGdOOE5ISHJpTldpUVdSQmVmcEI2VDExVTcxNnB3LmxrS21iNlVNdklZcDJpSGxiNlNOUl9ZdVNoalExbm0yQk0t'
+  #手机号 用于获取ssoToken
+  phone: '15014749349'
+  #上传文件时文件夹id
+  upload_dirid: 'FsR0qyjusEiKzkMihaDlE_6Us1RlJLACi'
+  AccountType: 1 #账号类型 1=新个人云 0=个人云 可参考Alist文档进行判断
+share:
+  #是否开启完成分享文件任务功能
+  enable: false
+  #分享时使用的文件名，需要放置在上传文件时文件夹目录内
+  filename: '1.png'
+upload:
+  #是否开启完成上传任务功能
+  enable: false

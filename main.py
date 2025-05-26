@@ -27,6 +27,7 @@ class CaiYun:
 
     def fetch_ssoToken(self):
         url = 'https://orches.yun.139.com/orchestration/auth-rebuild/token/v1.0/querySpecToken?client=app'
+        print(self.auth_token)
         headers = {
             'Authorization': f"Basic {self.auth_token}",
             'Content-Type': 'application/json',
@@ -142,15 +143,15 @@ class CaiYun:
             # verify=False
         )
         if resp.status_code != 200:
-            logger.error(f"上传文件失败，返回结果{resp.content}")  
+            logger.error(f"上传文件失败，返回结果{resp.content}")
             return False
         logger.success("上传文件成功")
-        return True  
+        return True
 
     def check_pending_clouds(self):
-        r = requests.get('https://caiyun.feixin.10086.cn/market/signin/page/receive', 
-                        headers=self.headers, 
-                        cookies=self.cookies).json()
+        r = requests.get('https://caiyun.feixin.10086.cn/market/signin/page/receive',
+                         headers=self.headers,
+                         cookies=self.cookies).json()
         clouds = r["result"].get("receive", "")
         all_clouds = r["result"].get("total", "")
         logger.info(f'当前待领取云朵:{clouds}')
@@ -211,7 +212,7 @@ class CaiYun:
         filelist = filelist_resp.json()
         share_file_data = {}
         share_data = {}
-        
+
         if config.get('caiyun.AccountType') == 1:
             contentList = filelist.get('data').get('items')
             share_file_data = [item for item in contentList if config.get('share.filename') in item['name']][0]
@@ -236,7 +237,7 @@ class CaiYun:
                     }
                 }
             }
-            
+
         if config.get('caiyun.AccountType') == 0:
             contentList = filelist.get('data').get('getDiskResult').get('contentList')
             if contentList == []:
@@ -264,7 +265,7 @@ class CaiYun:
                     }
                 }
             }
-            
+
         resp_json = requests.post(
             url='https://yun.139.com/orchestration/personalCloud-rebuild/outlink/v1.0/getOutLink',
             headers=self.headers,
@@ -272,7 +273,7 @@ class CaiYun:
             data=json.dumps(share_data),
             # verify=False,
         ).json()
-        
+
         if resp_json.get('success') == True:
             out_link = resp_json.get("data").get("getOutLinkRes").get("getOutLinkResSet")[0].get("linkUrl")
             logger.success(f'分享成功,url: {out_link}')
@@ -288,6 +289,8 @@ def gen_file(size_mb=15):
 
 
 def job():
+    # cmccc_token = 'cGM6MTUwMTQ3NDkzNDk6bThicEVid3R8MXxSQ1N8MTc1MDg1NDE1OTUxNHxFLnNBRW5rNEhzbldHNTJ6Y0dWMFU5TDlTM3p4TUxuNVI3bnFZREU2ZDhwTDZXMXJRNl9oLlZ5QklUaVQ1YWlHWkhBY0Z2cGpBV1dsLmM2eC5UeXJOWk9IX00wZFk0RDRYeEFzVTFQVmYySGdOOE5ISHJpTldpUVdSQmVmcEI2VDExVTcxNnB3LmxrS21iNlVNdklZcDJpSGxiNlNOUl9ZdVNoalExbm0yQk0t'
+    # phone = '15014749349'
     caiyun = CaiYun(token=str(config.get('caiyun.token')), account=config.get('caiyun.phone'))  # type: ignore
     logger.info("获取jwtToken")
     caiyun.fetch_jwtToken()

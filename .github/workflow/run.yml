@@ -1,0 +1,28 @@
+name: 签到+简单任务
+
+on:
+  # github定时工作流，但时间不是东八区。东0区，北京时间减8小时。
+  schedule:
+    - cron: '19 21,6 * * *'
+  # 点击star收藏，则手动执行此github工作流
+  watch:
+    types: started
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'watch' && github.event.repository.owner.id == github.event.sender.id
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r src/requirements.txt
+
+      - name: start run
+        env:
+          ydypCK: ${{ secrets.ydypCK }}
+        run: python 139cloud.py
