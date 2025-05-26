@@ -100,10 +100,10 @@ class YP:
             # 任务
             self.get_tasklist(url='sign_in_3', app_type='cloud_app')
             # todo 都失效了
-            print(f'\n☁️ 云朵大作战')
-            self.cloud_game()
-            print(f'\n🌳 果园任务')
-            self.fruitLogin()
+            # print(f'\n☁️ 云朵大作战')
+            # self.cloud_game()
+            # print(f'\n🌳 果园任务')
+            # self.fruitLogin()
             print(f'\n📰 公众号任务')
             self.wxsign()
             self.shake()
@@ -111,9 +111,9 @@ class YP:
             print(f'\n🔥 热门任务')
             self.backup_cloud()
             self.open_send()
-            print(f'\n📧 139邮箱任务')
-            self.get_tasklist(url='newsign_139mail', app_type='email_app')
-            self.receive()
+            # print(f'\n📧 139邮箱任务')
+            # self.get_tasklist(url='newsign_139mail', app_type='email_app')
+            # self.receive()
         else:
             global err_accounts
             # 失效账号
