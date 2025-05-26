@@ -1,3 +1,12 @@
+
+最后只用到：139cloud.py
+环境变量：  名：ydypCK   值：完整Authorization值#手机号#token值       第①部分包括Basic，第③部分token值为00即可。
+
+
+
+
+
+
 ![caiyun-autosign](https://socialify.git.ci/unify-z/caiyun-autosign/image?description=1&language=1&name=1&owner=1&theme=Auto)
 ## 📖 介绍
 基于 Python 的中国移动云盘（原和彩云）自动签到程序

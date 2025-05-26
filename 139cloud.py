@@ -100,10 +100,10 @@ class YP:
             # 任务
             self.get_tasklist(url='sign_in_3', app_type='cloud_app')
             # todo 都失效了
-            # print(f'\n☁️ 云朵大作战')
-            # self.cloud_game()
-            # print(f'\n🌳 果园任务')
-            # self.fruitLogin()
+            print(f'\n☁️ 云朵大作战')
+            self.cloud_game()
+            print(f'\n🌳 果园任务')
+            self.fruitLogin()
             print(f'\n📰 公众号任务')
             self.wxsign()
             self.shake()
@@ -111,8 +111,8 @@ class YP:
             print(f'\n🔥 热门任务')
             self.backup_cloud()
             self.open_send()
-            # print(f'\n📧 139邮箱任务')
-            # self.get_tasklist(url='newsign_139mail', app_type='email_app')
+            print(f'\n📧 139邮箱任务')
+            self.get_tasklist(url='newsign_139mail', app_type='email_app')
             self.receive()
         else:
             global err_accounts
@@ -710,16 +710,16 @@ class YP:
 
             print(f'今日剩余游戏次数: {currnum}\n本月排名: {rank}    合成次数: {count}')
 
-            # todo 可以注释不做
-            # for _ in range(currnum):
-            #     self.send_request(bigin_url, headers=self.jwtHeaders, cookies=self.cookies).json()
-            #     print('-开始游戏,等待10-15秒完成游戏')
-            #     time.sleep(random.randint(10, 15))
-            #     end_data = self.send_request(end_url, headers=self.jwtHeaders, cookies=self.cookies).json()
-            #     if end_data and end_data.get('code', -1) == 0:
-            #         print('游戏成功')
-            #     else:
-            #         print('游戏失败')
+            # 游戏 可不做
+            for _ in range(currnum):
+                self.send_request(bigin_url, headers=self.jwtHeaders, cookies=self.cookies).json()
+                print('-开始游戏,等待10-15秒完成游戏')
+                time.sleep(random.randint(10, 15))
+                end_data = self.send_request(end_url, headers=self.jwtHeaders, cookies=self.cookies).json()
+                if end_data and end_data.get('code', -1) == 0:
+                    print('游戏成功')
+                else:
+                    print('游戏失败')
         else:
             print("-获取游戏信息失败")
 
