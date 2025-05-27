@@ -289,8 +289,6 @@ def gen_file(size_mb=15):
 
 
 def job():
-    # cmccc_token = 'cGM6MTUwMTQ3NDkzNDk6bThicEVid3R8MXxSQ1N8MTc1MDg1NDE1OTUxNHxFLnNBRW5rNEhzbldHNTJ6Y0dWMFU5TDlTM3p4TUxuNVI3bnFZREU2ZDhwTDZXMXJRNl9oLlZ5QklUaVQ1YWlHWkhBY0Z2cGpBV1dsLmM2eC5UeXJOWk9IX00wZFk0RDRYeEFzVTFQVmYySGdOOE5ISHJpTldpUVdSQmVmcEI2VDExVTcxNnB3LmxrS21iNlVNdklZcDJpSGxiNlNOUl9ZdVNoalExbm0yQk0t'
-    # phone = '15014749349'
     caiyun = CaiYun(token=str(config.get('caiyun.token')), account=config.get('caiyun.phone'))  # type: ignore
     logger.info("获取jwtToken")
     caiyun.fetch_jwtToken()
