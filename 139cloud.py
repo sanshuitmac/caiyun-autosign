@@ -14,6 +14,7 @@
 # 作者: 洋洋不瘦
 # fix 20240828 ArcadiaScriptPublic  频道：https://t.me/ArcadiaScript 群组：https://t.me/ArcadiaScriptPublic
 # 抓包 第一个参数小程序orches.yun.139.com 或者aas.caiyun.feixin.10086.cn 搜Basic 全局搜也行  第三个参数app 域名caiyun.feixin.10086.cn或者签到链接https://caiyun.feixin.10086.cn:7071/market/signin/task/click?key=task&id=409的jwttoken
+# 原仓库：https://github.com/zjk2017/ArcadiaScriptPublic
 import os
 import random
 import re
@@ -833,9 +834,21 @@ class YP:
             print('- 通知权限未开启')
 
 
+# 消息推送微信pushplus：需要1元实名认证费用
+def send_wx_msg(p_token, title, content):
+    if p_token is None:
+        return
+    url = 'http://www.pushplus.plus/send'
+    r = requests.get(url, params={'token': p_token,
+                                  'title': title,
+                                  'content': content})
+    print(f'微信推送结果：{r.status_code, r.text}')
+
+
 if __name__ == "__main__":
     env_name = 'ydypCK'
     token = os.getenv(env_name)
+    PUSHPLUS_TOKEN = os.getenv('PUSHPLUS')
     if not token:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)
@@ -851,11 +864,15 @@ if __name__ == "__main__":
 
     # 输出异常账号信息
     if err_accounts != '':
-        print(f"\n失效账号:\n{err_accounts}")
+        msg_content = f"\n失效账号:\n{err_accounts}"
+        print(msg_content)
+        send_wx_msg(PUSHPLUS_TOKEN, '移动云盘签到异常', msg_content)
     else:
         print('当前所有账号ck有效')
     if err_message != '':
-        print(f'-错误信息: \n{err_message}')
+        msg_error = f'-错误信息: \n{err_message}'
+        print(msg_error)
+        send_wx_msg(PUSHPLUS_TOKEN, '移动云盘签到异常', msg_error)
     print(user_amount)
     # 在load_send中获取导入的send函数
     send = load_send()

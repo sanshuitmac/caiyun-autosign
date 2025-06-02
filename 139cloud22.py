@@ -5,6 +5,7 @@
 # @EditTime         2024/11/4
 # cron: 0 0 8 * * *
 # const $ = new Env('中国移动云盘');
+# 原仓库：https://github.com/NeitherCandiDa/QL_TimingScript
 """
 设置环境变量，ydyp_ck，格式 Basic XXXXXXXX#手机号#token
 多个账号用@分割

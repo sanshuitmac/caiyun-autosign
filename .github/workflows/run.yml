@@ -25,4 +25,5 @@ jobs:
       - name: start run
         env:
           ydypCK: ${{ secrets.ydypCK }}
+          PUSHPLUS: ${{ secrets.PUSHPLUS }}
         run: python 139cloud.py
