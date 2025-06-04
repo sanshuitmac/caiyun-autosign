@@ -25,6 +25,7 @@ import requests
 
 ua = 'Mozilla/5.0 (Linux; Android 11; M2012K10C Build/RP1A.200720.011; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/90.0.4430.210 Mobile Safari/537.36 MCloudApp/10.0.1'
 
+# 环境变量：多账号token若以换行分割，pycharm里编辑配置环境变量不能读取所有账号，只能读取一个（最好“@”分割）
 err_accounts = ''  # 异常账号
 err_message = ''  # 错误信息
 user_amount = ''  # 用户云朵·数量
