@@ -859,8 +859,8 @@ if __name__ == "__main__":
     for i, account_info in enumerate(cookies, start=1):
         print(f"\n======== ▷ 第 {i} 个账号 ◁ ========")
         YP(account_info).run()
-        print("\n随机等待5-10s进行下一个账号")
-        time.sleep(random.randint(5, 10))
+        print("\n随机等待2-4s进行下一个账号")
+        time.sleep(random.randint(2, 4))
 
     # 输出异常账号信息
     if err_accounts != '':

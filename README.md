@@ -2,6 +2,7 @@
 2、环境变量：  名：ydypCK   值：完整Authorization值#手机号#token值       第①部分包括Basic，第③部分token值为00即可。多账号换行或者“@”分开
              wx pushplus推送：名：PUSHPLUS  值：自己token
 3、已开启Actions定时运行 。（后方read也来自上游，暂未用到）
+4、本地phones格式：手机号，换行Authorization值，经过formatToken换成标准环境变量的secret
 
 
 
