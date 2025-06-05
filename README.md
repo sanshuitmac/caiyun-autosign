@@ -5,7 +5,7 @@
 4、本地phones格式：手机号，换行Authorization值，经过formatToken换成标准环境变量的secret。test
 
 
-5、asign.config.mjs是另一个js签到脚本的，经过addJSToken.py处理phones.txt（格式：手机换行Basictoken）后，得到的纯token.
+5、asign.config.mjs是另一个js签到脚本的，经过addJSToken.py（不完美）处理phones.txt（格式：手机换行Basictoken，所有号码）后，得到的纯token（但不能直接用，只能复制里面token拷贝使用）
 拷贝这些token到D:\caiyun-0.5.4\tools\asign.config.mjs中，并上传该文件到gcp-hk的/root/caiyun_sign目录中。gcphk定时运行。
 
 
