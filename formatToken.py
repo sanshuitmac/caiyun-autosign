@@ -6,7 +6,7 @@ def transform_file(input_path, output_path):
         lines = [line.strip() for line in f if line.strip()]
 
     if len(lines) % 2 != 0:
-        raise ValueError(f"文件 {input_path} 格式错误：数据行数应为偶数，每个号码对应一个 token")
+        raise ValueError(f"文件 {input_path} 格式错误：数据行数应为偶数，每个号码对应一个 token ")
 
     result_lines = []
     for i in range(0, len(lines), 2):
